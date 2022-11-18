@@ -1,0 +1,7 @@
+input {
+  dead_letter_queue {
+    path => "/var/lib/logstash/dead_letter_queue/netflix-prod/" 
+    commit_offsets => false 
+    pipeline_id => "netflix-prod" 
+  }
+}

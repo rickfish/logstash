@@ -1,0 +1,49 @@
+- pipeline.id: netflix-unit
+  path.config: "/etc/logstash/conf.d/{100_input_unit,200_filter_unit,299_filter_common,399_output_common}.conf"
+  dead_letter_queue.enable: true
+  pipeline.workers: 1
+  path.dead_letter_queue: "/var/lib/logstash/dead_letter_queue/netflix-unit"
+
+- pipeline.id: netflix-unit-dlq
+  path.config: "/etc/logstash/conf.d/{100_dlq_input_unit,299_dlq_filter_common,399_dlq_output_common}.conf"
+  pipeline.workers: 1
+
+- pipeline.id: netflix-test
+  path.config: "/etc/logstash/conf.d/{100_input_test,200_filter_test,299_filter_common,399_output_common}.conf"
+  dead_letter_queue.enable: true
+  pipeline.workers: 1
+  path.dead_letter_queue: "/var/lib/logstash/dead_letter_queue/netflix-test"
+
+- pipeline.id: netflix-test-dlq
+  path.config: "/etc/logstash/conf.d/{100_dlq_input_test,299_dlq_filter_common,399_dlq_output_common}.conf"
+  pipeline.workers: 1
+
+- pipeline.id: netflix-testb
+  path.config: "/etc/logstash/conf.d/{100_input_testb,200_filter_testb,299_filter_common,399_output_common}.conf"
+  dead_letter_queue.enable: true
+  pipeline.workers: 1
+  path.dead_letter_queue: "/var/lib/logstash/dead_letter_queue/netflix-testb"
+
+- pipeline.id: netflix-testb-dlq
+  path.config: "/etc/logstash/conf.d/{100_dlq_input_testb,299_dlq_filter_common,399_dlq_output_common}.conf"
+  pipeline.workers: 1
+
+- pipeline.id: netflix-testc
+  path.config: "/etc/logstash/conf.d/{100_input_testc,200_filter_testc,299_filter_common,399_output_common}.conf"
+  dead_letter_queue.enable: true
+  pipeline.workers: 1
+  path.dead_letter_queue: "/var/lib/logstash/dead_letter_queue/netflix-testc"
+
+- pipeline.id: netflix-testc-dlq
+  path.config: "/etc/logstash/conf.d/{100_dlq_input_testc,299_dlq_filter_common,399_dlq_output_common}.conf"
+  pipeline.workers: 1
+
+- pipeline.id: netflix-stage
+  path.config: "/etc/logstash/conf.d/{100_input_stage,200_filter_stage,299_filter_common,399_output_common}.conf"
+  dead_letter_queue.enable: true
+  pipeline.workers: 1
+  path.dead_letter_queue: "/var/lib/logstash/dead_letter_queue/netflix-stage"
+
+- pipeline.id: netflix-stage-dlq
+  path.config: "/etc/logstash/conf.d/{100_dlq_input_stage,299_dlq_filter_common,399_dlq_output_common}.conf"
+  pipeline.workers: 1

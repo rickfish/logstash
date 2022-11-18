@@ -1,0 +1,66 @@
+filter {
+	if[payload] {
+		mutate {
+			add_field => { "routing" => "message" }
+		}
+	} else if [event] or [event] == 'null'{
+		mutate {
+			add_field => { "routing" => "event" }
+		}     
+	} else if [log] {
+		mutate {
+			add_field => { "routing" => "log" }
+		}     
+	} else if [taskType] {
+		mutate {
+			add_field => { "routing" => "task" }
+		}
+	} else {
+		mutate {
+			add_field => { "routing" => "workflow" }
+		}
+	}
+}
+
+filter {
+	if[startTime] == 'null' {
+		ruby { code => "event.remove('startTime')"}
+	}
+
+	mutate {
+		add_field => { "[@metadata][secrole]" => "%{[tags][secRole]}" }
+		
+		add_field => { "offset" => "%{[@metadata][kafka][offset]}" }
+		add_field => { "kafka_timestamp" => "%{[@metadata][kafka][timestamp]}" }
+		add_field => { "consumer_group" => "%{[@metadata][kafka][consumer_group]}" }
+		add_field => { "partition" => "%{[@metadata][kafka][partition]}" }
+		add_field => { "key" => "%{[@metadata][kafka][key]}" }
+		add_field => { "topic" => "%{[@metadata][kafka][topic]}" }
+	}
+	mutate {
+		lowercase => [ "[@metadata][secrole]" ]
+	}
+	if [routing] == "task" or [routing] == "workflow" {
+		if [@metadata][secrole] == "gen" {
+			mutate {
+				add_field => {"[@metadata][activeIndexName]" => "conductor_%{[@metadata][environment]}_%{[routing]}_gen_active"}
+				add_field => {"[@metadata][terminalIndexName]" => "conductor_%{[@metadata][environment]}_%{[routing]}_gen_%{+YYYY.MM}"}
+			}
+		} else if [@metadata][secrole] == "fep" or
+			[@metadata][secrole] == "sao" or
+			[@metadata][secrole] == "emp" or
+			[@metadata][secrole] == "bch" or
+			[@metadata][secrole] == "blu" or
+			[@metadata][secrole] == "sen" {
+			mutate {
+				add_field => {"[@metadata][activeIndexName]" => "conductor_%{[@metadata][environment]}_%{[routing]}_%{[@metadata][secrole]}_active"}
+				add_field => {"[@metadata][terminalIndexName]" => "conductor_%{[@metadata][environment]}_%{[routing]}_%{[@metadata][secrole]}_%{+YYYY}"}
+			}
+		} else {
+			mutate {
+				add_field => {"[@metadata][activeIndexName]" => "conductor_%{[@metadata][environment]}_%{[routing]}_invalid_secrole_active"}
+				add_field => {"[@metadata][terminalIndexName]" => "conductor_%{[@metadata][environment]}_%{[routing]}_invalid_secrole"}
+			}
+		}
+	}
+}

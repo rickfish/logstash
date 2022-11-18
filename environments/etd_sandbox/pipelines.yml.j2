@@ -1,0 +1,11 @@
+- pipeline.id: etd-sandbox
+  path.config: "/etc/logstash/conf.d/{100_input_unitb,200_filter_unitb,299_filter_common,399_output_common}.conf"
+  path.dead_letter_queue: "/var/lib/logstash/dead_letter_queue/etd-sandbox"
+  
+- pipeline.id: etd-sandbox-dlq
+  path.config: "/etc/logstash/conf.d/{100_dlq_input_unitb,299_dlq_filter_common,399_dlq_output_common}.conf"
+
+#- pipeline.id: etd-sandbox-noop
+#  path.config: "/etc/logstash/conf.d/{noop}.conf"
+#  pipeline.workers: 1
+  

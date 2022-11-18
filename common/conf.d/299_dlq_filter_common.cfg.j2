@@ -1,0 +1,17 @@
+filter {
+  ruby {
+    code => "event.set('failed_message', event.to_json())"
+  }
+
+  prune {
+    whitelist_names => [ "^failed_message$", "timestamp" ]
+  }
+
+  mutate {
+    add_field => {
+      "message" => "%{[@metadata][dead_letter_queue][reason]}"
+      "plugin_id" => "%{[@metadata][dead_letter_queue][plugin_id]}"
+      "plugin_type" => "%{[@metadata][dead_letter_queue][plugin_type]}"
+    }
+  }
+}

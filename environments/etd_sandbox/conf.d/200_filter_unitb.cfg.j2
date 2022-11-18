@@ -1,0 +1,6 @@
+filter {
+	mutate {
+		add_field => { "[@metadata][environment]" => "unitb" }
+		add_field => { "[@metadata][kafka_cluster]" => {{ es_etd_sandbox_cluster }} }
+	}
+}

@@ -1,0 +1,11 @@
+output {
+  elasticsearch {
+    ssl => true
+    ssl_certificate_verification => false
+    cacert => "/etc/logstash/{{ inventory_hostname }}/es_certs/ca/ca.crt"
+    hosts => {{ es_prod_cluster }}
+    index => "etd_deadletter-%{+YYYY.MM.dd}"
+	user => "${LOGSTASH_WRITER}"
+	password => "${LOGSTASH_WRITER_PASSWORD}"
+  } 
+}

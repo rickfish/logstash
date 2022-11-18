@@ -1,0 +1,22 @@
+input {
+	kafka {
+		jaas_path => "/etc/logstash/{{ inventory_hostname }}/jaas/jaas.conf"
+		topics => ["etd-conductor-b"]
+		client_id => "conductor-unitb"
+		auto_offset_reset => "earliest"
+		decorate_events => "true"
+		auto_commit_interval_ms => "200"
+		enable_auto_commit => true
+		sasl_kerberos_service_name => "{{kafka_unit_service_name}}"
+		codec => json
+		security_protocol => "SASL_PLAINTEXT"
+		bootstrap_servers => {{ kafka_unit_broker_servers }}
+		group_id => 'elk-ls-etd'
+		heartbeat_interval_ms => "1000"
+		poll_timeout_ms => "10000"
+		session_timeout_ms => "120000"
+		request_timeout_ms => "130000"
+		partition_assignment_strategy => "org.apache.kafka.clients.consumer.RoundRobinAssignor"
+		consumer_threads => 1
+	}
+}

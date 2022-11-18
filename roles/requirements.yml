@@ -1,0 +1,4 @@
+- src: git@edclgitp401.bcbsfl.com:git-ini/ansible-role-logstash-stewardship.git
+  version: master
+  name: elastic.logstash-stewardship
+  scm: git

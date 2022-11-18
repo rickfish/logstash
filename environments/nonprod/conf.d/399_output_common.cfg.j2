@@ -1,0 +1,117 @@
+output {
+	if [routing] == "event" {
+		elasticsearch {
+			ssl => true
+			ssl_certificate_verification => false
+			cacert => "/etc/logstash/{{ inventory_hostname }}/es_certs/ca/ca.crt"
+			hosts => {{ es_nonprod_cluster }}
+			index => "conductor_%{[@metadata][environment]}_event_%{+YYYY.MM}"
+			user => "${LOGSTASH_WRITER}"
+			password => "${LOGSTASH_WRITER_PASSWORD}"
+		}
+	}
+	if [routing] == "log" {
+		elasticsearch {
+			ssl => true
+			ssl_certificate_verification => false
+			cacert => "/etc/logstash/{{ inventory_hostname }}/es_certs/ca/ca.crt"
+			hosts => {{ es_nonprod_cluster }}
+			index => "conductor_%{[@metadata][environment]}_tasklog_%{+YYYY.MM}"
+			user => "${LOGSTASH_WRITER}"
+			password => "${LOGSTASH_WRITER_PASSWORD}"
+		}
+	}
+	if [routing] == "task" {
+		if [status] == "SCHEDULED" or [status] == "IN_PROGRESS" or [status] == "READY_FOR_RERUN" {
+			elasticsearch {
+				ssl => true
+				ssl_certificate_verification => false
+				cacert => "/etc/logstash/{{ inventory_hostname }}/es_certs/ca/ca.crt"
+				hosts => {{ es_nonprod_cluster }}
+				index => "%{[@metadata][activeIndexName]}"
+				document_id=> "%{taskId}"
+				doc_as_upsert => true
+				user => "${LOGSTASH_WRITER}"
+				password => "${LOGSTASH_WRITER_PASSWORD}"
+				codec => "json"
+			}
+		} else {
+		  elasticsearch {
+		    ssl => true
+		    ssl_certificate_verification => false
+		    cacert => "/etc/logstash/{{ inventory_hostname }}/es_certs/ca/ca.crt"
+		    hosts => {{ es_nonprod_cluster }}
+		    index => "%{[@metadata][terminalIndexName]}"
+			document_id=> "%{taskId}"
+		    doc_as_upsert => true
+			user => "${LOGSTASH_WRITER}"
+			password => "${LOGSTASH_WRITER_PASSWORD}"
+			codec => "json"
+		  }
+		  elasticsearch {
+		  	action => "delete"
+		    ssl => true
+		    ssl_certificate_verification => false
+		    cacert => "/etc/logstash/{{ inventory_hostname }}/es_certs/ca/ca.crt"
+		    hosts => {{ es_nonprod_cluster }}
+		    index => "%{[@metadata][activeIndexName]}"
+			document_id=> "%{taskId}"
+			user => "${LOGSTASH_WRITER}"
+			password => "${LOGSTASH_WRITER_PASSWORD}"
+			codec => "json"
+		  }
+		}
+	}
+	if [routing] == "workflow" {
+		if [status] == "RUNNING" or [status] == "PAUSED" {
+		  elasticsearch {
+		    ssl => true
+		    ssl_certificate_verification => false
+		    cacert => "/etc/logstash/{{ inventory_hostname }}/es_certs/ca/ca.crt"
+		    hosts => {{ es_nonprod_cluster }}
+		    index => "%{[@metadata][activeIndexName]}"
+			document_id=> "%{workflowId}"
+		    doc_as_upsert => true
+			user => "${LOGSTASH_WRITER}"
+			password => "${LOGSTASH_WRITER_PASSWORD}"
+			codec => "json"
+		  }
+		} else {
+		  elasticsearch {
+		    ssl => true
+		    ssl_certificate_verification => false
+		    cacert => "/etc/logstash/{{ inventory_hostname }}/es_certs/ca/ca.crt"
+		    hosts => {{ es_nonprod_cluster }}
+		    index => "%{[@metadata][terminalIndexName]}"
+			document_id=> "%{workflowId}"
+		    doc_as_upsert => true
+			user => "${LOGSTASH_WRITER}"
+			password => "${LOGSTASH_WRITER_PASSWORD}"
+			codec => "json"
+		  }
+		  elasticsearch {
+		  	action => "delete"
+		    ssl => true
+		    ssl_certificate_verification => false
+		    cacert => "/etc/logstash/{{ inventory_hostname }}/es_certs/ca/ca.crt"
+		    hosts => {{ es_nonprod_cluster }}
+		    index => "%{[@metadata][activeIndexName]}"
+			document_id=> "%{workflowId}"
+			user => "${LOGSTASH_WRITER}"
+			password => "${LOGSTASH_WRITER_PASSWORD}"
+			codec => "json"
+		  }
+		}
+	}
+	if [routing] == "message" {
+	  elasticsearch {
+	    ssl => true
+	    ssl_certificate_verification => false
+	    cacert => "/etc/logstash/{{ inventory_hostname }}/es_certs/ca/ca.crt"
+	    hosts => {{ es_nonprod_cluster }}
+	    index => "conductor_%{[@metadata][environment]}_message_%{+YYYY.MM}"
+		user => "${LOGSTASH_WRITER}"
+		password => "${LOGSTASH_WRITER_PASSWORD}"
+	  }
+	}
+ }

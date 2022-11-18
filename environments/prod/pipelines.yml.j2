@@ -1,0 +1,13 @@
+- pipeline.id: netflix-prod
+  path.config: "/etc/logstash/conf.d/{100_input,200_filter,299_filter_common,399_output_common}.conf"
+  dead_letter_queue.enable: true
+  pipeline.workers: 1
+  path.dead_letter_queue: "/var/lib/logstash/dead_letter_queue/netflix-prod"
+
+- pipeline.id: netflix-prod-dlq
+  path.config: "/etc/logstash/conf.d/{100_dlq_input,299_dlq_filter_common,399_dlq_output_common}.conf"
+  pipeline.workers: 1
+
+#- pipeline.id: netflix-prod-noop
+#  path.config: "/etc/logstash/conf.d/{noop}.conf"
+#  pipeline.workers: 1
